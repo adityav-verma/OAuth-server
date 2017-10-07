@@ -5,3 +5,4 @@ Flask-Migrate==2.1.1
 iPython==5.5.0
 MySQL-Python
 Flask-WTF==0.14.2
+Flask-OAuthlib==0.9.4
