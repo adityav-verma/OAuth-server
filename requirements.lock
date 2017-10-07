@@ -3,3 +3,5 @@ Flask-Script==2.0.6
 Flask-SQLAlchemy==2.3.1
 Flask-Migrate==2.1.1
 iPython==5.5.0
+MySQL-Python
+Flask-WTF==0.14.2
