@@ -56,3 +56,57 @@ class Client(db.Model):
         if self._allowed_grant_types:
             return self._allowed_grant_types.split(' ')
         return []
+
+
+class Grant(db.Model):
+    __tablename__ = 'grants'
+    id = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(
+        db.String(100), db.ForeignKey('client.client_id'), nullable=False
+    )
+    client = db.relationship('Client')
+    code = db.Column(db.String(255), index=True, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User')
+    redirect_uri = db.Column(db.String(255))
+    expires = db.Column(db.DateTime)
+
+    _scopes = db.Column(db.Text)
+
+
+    @property
+    def scopes(self):
+        if self._scopes:
+            return self._scopes.split(' ')
+        return []
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+        return self
+
+
+class Token(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    client_id = db.Column(
+        db.String(100), db.ForeignKey('client.client_id'), nullable=False
+    )
+    client = db.relationship('Client')
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    user = db.relationship('User')
+    token_type = db.Column(db.String(50))
+    access_token = db.Column(db.String(255), unique=True, nullable=False)
+    refresh_token = db.Column(db.String(255), unique=True, nullable=False)
+    expires = db.Column(db.DateTime)
+    _scopes = db.Column(db.Text)
+
+    @property
+    def scopes(self):
+        if self._scopes:
+            return self._scopes.split()
+        return []
+
+    def delete(self):
+        db.session.delete(self)
+        db.session.commit()
+        return self
