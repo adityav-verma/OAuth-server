@@ -10,7 +10,7 @@ class User(db.Model):
         return self.password == password
 
     def __repr__(self):
-        return '<User id: {}, name: {}>'.format(self.id, self.name)
+        return '<User id: {}, name: {}>'.format(self.id, self.username)
 
 
 # OAuth related models
@@ -35,7 +35,7 @@ class Client(db.Model):
         return []
 
     @property
-    def _default_scopes(self):
+    def default_scopes(self):
         if self._default_scopes:
             return self._default_scopes.split(' ')
         return []

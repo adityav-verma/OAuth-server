@@ -1,5 +1,5 @@
 from app import app, db, oauth
-from app.models import User, Client, Grant
+from app.models import User, Client, Grant, Token
 from datetime import datetime, timedelta
 
 
@@ -9,7 +9,7 @@ def get_current_user():
 
 @oauth.clientgetter
 def load_client(client_id):
-    return Client.query.get(client_id)
+    return Client.query.filter_by(client_id=client_id).first()
 
 @oauth.grantgetter
 def load_grant(client_id, code):
@@ -47,8 +47,8 @@ def save_token(token, request, *args, **kwargs):
         client_id=request.client.client_id, user_id=request.user.id
     )
     # Every client should have only one active token, hence removing the old
-    for token in current_tokens:
-        token.delete()
+    for x in current_tokens:
+        x.delete()
     expires_in = token.get('expires_in')
     expires = datetime.utcnow() + timedelta(seconds=expires_in)
 
@@ -67,7 +67,7 @@ def save_token(token, request, *args, **kwargs):
 
 
 @oauth.usergetter
-def get_user(username, password):
+def get_user(username, password, *args, **kwargs):
     user = User.query.filter_by(username=username).first()
     if user and user.check_password(password):
         return user

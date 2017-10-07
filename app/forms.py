@@ -3,5 +3,5 @@ from wtforms import TextField
 from wtforms.validators import InputRequired
 
 class RegistrationForm(FlaskForm):
-    name = TextField('Name', validators=[InputRequired()])
+    username = TextField('Username', validators=[InputRequired()])
     password = TextField('Password', validators=[InputRequired()])
