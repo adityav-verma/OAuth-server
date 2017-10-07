@@ -31,3 +31,44 @@ def save_grant(client_id, code, request, *args, **kwargs):
     db.session.add(grant)
     db.session.commit()
     return grant
+
+
+@oauth.tokengetter
+def load_token(access_token=None, refresh_token=None):
+    if access_token:
+        return Token.query.filter_by(access_token=access_token).first()
+    if refresh_token:
+        return Token.query.filter_by(refresh_token=refresh_token).first()
+    return None
+
+@oauth.tokensetter
+def save_token(token, request, *args, **kwargs):
+    current_tokens = Token.query.filter_by(
+        client_id=request.client.client_id, user_id=request.user.id
+    )
+    # Every client should have only one active token, hence removing the old
+    for token in current_tokens:
+        token.delete()
+    expires_in = token.get('expires_in')
+    expires = datetime.utcnow() + timedelta(seconds=expires_in)
+
+    tok = Token(
+        access_token=token.get('access_token'),
+        refresh_token=token.get('refresh_token'),
+        token_type=token.get('token_type'),
+        _scopes=token.get('scope'),
+        expires=expires,
+        client=request.client,
+        user=request.user
+    )
+    db.session.add(tok)
+    db.session.commit()
+    return tok
+
+
+@oauth.usergetter
+def get_user(username, password):
+    user = User.query.filter_by(username=username).first()
+    if user and user.check_password(password):
+        return user
+    return None
