@@ -1,0 +1,11 @@
+# Flask config
+TESTING=True
+DEBUG=True
+
+
+# SQLAlchemy Config
+SQLALCHEMY_DATABASE_URI = 'mysql://username:password@localhost:3306/oauth'
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+# CSRF Config
+WTF_CSRF_ENABLED = False
